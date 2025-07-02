@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-use App\Models\Municipio; // Importa tu modelo Municipio
+use App\Models\Municipio; 
 use Illuminate\Database\Eloquent\Collection;
 
 interface MunicipioRepositoryInterface

@@ -21,15 +21,15 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->configureRateLimiting(); // Si tienes límite de tasas configurado
+        $this->configureRateLimiting(); 
 
         $this->routes(function () {
-            // Carga las rutas API
-            Route::middleware('api') // Este middleware aplica el prefijo /api por defecto
-                ->prefix('api')      // Prefijo 'api' para todas las rutas cargadas aquí
+            
+            Route::middleware('api') 
+                ->prefix('api')      
                 ->group(base_path('routes/api.php'));
 
-            // Carga las rutas web (para las vistas si las usas)
+            
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
         });
@@ -40,10 +40,10 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function configureRateLimiting(): void
     {
-        // Puedes añadir tus rate limiters aquí si los necesitas
-        // Ejemplo:
-        // RateLimiter::for('api', function (Request $request) {
-        //     return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        // });
+        
+        
+        
+        
+        
     }
 }

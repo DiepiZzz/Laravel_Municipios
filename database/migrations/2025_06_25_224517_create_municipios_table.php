@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
          Schema::create('municipios', function (Blueprint $table) {
-            $table->id(); // ID autoincremental, clave primaria
+            $table->id(); 
             $table->string('nombre');
-            $table->string('departamento')->nullable(); // Puede ser nulo si no aplica
+            $table->string('departamento')->nullable(); 
             $table->string('pais');
             $table->string('alcalde')->nullable();
             $table->string('gobernador')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('numCasas')->nullable();
             $table->integer('numParques')->nullable();
             $table->integer('numColegios')->nullable();
-            $table->text('descripcion')->nullable(); // Usar 'text' para descripciones más largas
+            $table->text('descripcion')->nullable(); 
             $table->timestamps();
         });
     }

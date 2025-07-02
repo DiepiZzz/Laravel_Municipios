@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\UserRepositoryInterface;
-use App\Models\Usuario; // Asegúrate de importar el modelo correcto
+use App\Models\Usuario; 
 use Illuminate\Database\Eloquent\Collection;
 
 class UserRepository implements UserRepositoryInterface
@@ -37,7 +37,7 @@ class UserRepository implements UserRepositoryInterface
      */
     public function createUser(array $userData): Usuario
     {
-        // Asegúrate de que la contraseña se hashee antes de guardar
+        
         if (isset($userData['password'])) {
             $userData['password'] = bcrypt($userData['password']);
         }
@@ -55,7 +55,7 @@ class UserRepository implements UserRepositoryInterface
     {
         $user = Usuario::find($userId);
         if ($user) {
-            // Hashear la contraseña si se está actualizando
+            
             if (isset($newDetails['password'])) {
                 $newDetails['password'] = bcrypt($newDetails['password']);
             }

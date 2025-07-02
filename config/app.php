@@ -179,7 +179,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
-        App\Providers\ServiceServiceProvider::class,   // <--- ¡Esta es la línea añadida!
+        App\Providers\ServiceServiceProvider::class,  
 
     ],
 

@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Interfaces\UserRepositoryInterface; // Importa la interfaz del Repositorio
-use App\Interfaces\UserServiceInterface;    // Importa la interfaz del Servicio
+use App\Interfaces\UserRepositoryInterface; 
+use App\Interfaces\UserServiceInterface;    
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log; // Para logging de ejemplo
+use Illuminate\Support\Facades\Log; 
 
 class UserService implements UserServiceInterface
 {
@@ -46,11 +46,11 @@ class UserService implements UserServiceInterface
      */
     public function registerUser(array $userData): Usuario
     {
-        // Aquí podrías añadir lógica de negocio antes o después de interactuar con el repositorio.
-        // Por ejemplo:
-        // - Validaciones más complejas que no son solo de formulario.
-        // - Envío de un email de bienvenida.
-        // - Creación de registros en otras tablas (ej. perfil de usuario).
+        
+        
+        
+        
+        
 
         Log::info('Intentando registrar un nuevo usuario.', ['username' => $userData['username']]);
 
@@ -58,8 +58,8 @@ class UserService implements UserServiceInterface
 
         if ($user) {
             Log::info('Usuario registrado con éxito.', ['user_id' => $user->id]);
-            // Ejemplo: enviar email de bienvenida
-            // Mail::to($user->email)->send(new WelcomeEmail($user));
+            
+            
         }
 
         return $user;
@@ -99,8 +99,8 @@ class UserService implements UserServiceInterface
 
         if ($deleted) {
             Log::info('Cuenta de usuario eliminada con éxito.', ['user_id' => $userId]);
-            // Ejemplo: Eliminar datos relacionados en otras tablas
-            // RelatedModel::where('user_id', $userId)->delete();
+            
+            
         } else {
             Log::warning('Intento de eliminación de cuenta para usuario no existente.', ['user_id' => $userId]);
         }

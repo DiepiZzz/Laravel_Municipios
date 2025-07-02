@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\CanResetPassword;
-use App\Notifications\CustomResetPasswordNotification; // Importa tu notificación personalizada
+use App\Notifications\CustomResetPasswordNotification; 
 
 class Usuario extends Authenticatable implements CanResetPassword
 {
@@ -44,7 +44,7 @@ class Usuario extends Authenticatable implements CanResetPassword
         'password' => 'hashed',
     ];
 
-    // Este método es requerido por la interfaz CanResetPassword
+    
     public function getEmailForPasswordReset()
     {
         return $this->email;

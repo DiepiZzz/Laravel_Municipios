@@ -15,10 +15,10 @@ class ServiceServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Enlazar la interfaz UserServiceInterface a su implementación UserService
+        
         $this->app->bind(UserServiceInterface::class, UserService::class);
 
-        // Enlazar la interfaz MunicipioServiceInterface a su implementación MunicipioService
+        
         $this->app->bind(MunicipioServiceInterface::class, MunicipioService::class);
     }
 
@@ -27,6 +27,6 @@ class ServiceServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        
     }
 }

@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController; // Importa tu AuthController
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MunicipioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,34 +15,47 @@ use App\Http\Controllers\AuthController; // Importa tu AuthController
 |
 */
 
-// Ruta para la página de bienvenida
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Rutas de autenticación
+
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Rutas de registro
+
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
-// Rutas de recuperación de contraseña (flujo completo)
-// 1. Muestra el formulario para solicitar el restablecimiento de contraseña (ingresar email)
+
 Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
-// 2. Procesa el envío del formulario y envía el email de restablecimiento
 Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
-// 3. Muestra el formulario para restablecer la contraseña con el token (el enlace del email)
 Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
-// 4. Procesa el restablecimiento de la contraseña (cuando el usuario envía la nueva contraseña)
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
 
-// Ruta de ejemplo para el dashboard (a donde se redirige después de login/registro exitoso)
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard'); // Necesitarás crear esta vista (resources/views/dashboard.blade.php)
-    })->name('dashboard');
+
+Route::middleware('auth:web')->group(function () {
+    
+    Route::get('/municipios', [MunicipioController::class, 'index'])->name('municipios.index');
+    Route::get('/municipios/create', [MunicipioController::class, 'create'])->name('municipios.create');
+    Route::post('/municipios/guardar', [MunicipioController::class, 'store'])->name('municipios.store');
+
+    
+    Route::get('/municipios/{id}/edit', [MunicipioController::class, 'edit'])->name('municipios.edit');
+    Route::put('/municipios/{id}', [MunicipioController::class, 'update'])->name('municipios.update');
+    Route::delete('/municipios/{id}', [MunicipioController::class, 'destroy'])->name('municipios.destroy');
+
+    
+    Route::get('/municipios/graficas', [MunicipioController::class, 'showGraficas'])->name('municipios.graficas');
+
+    
+    Route::post('/municipios/graficas/pdf', [MunicipioController::class, 'downloadGraficasPdf'])->name('municipios.downloadPdf');
+
+    
+    
+    
+    
 });

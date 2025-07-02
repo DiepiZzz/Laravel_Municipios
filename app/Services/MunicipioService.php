@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Interfaces\MunicipioRepositoryInterface; // Importa la interfaz del Repositorio
-use App\Interfaces\MunicipioServiceInterface;    // Importa la interfaz del Servicio
+use App\Interfaces\MunicipioRepositoryInterface; 
+use App\Interfaces\MunicipioServiceInterface;    
 use App\Models\Municipio;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log; // Para logging de ejemplo
+use Illuminate\Support\Facades\Log; 
 
 class MunicipioService implements MunicipioServiceInterface
 {
@@ -51,8 +51,8 @@ class MunicipioService implements MunicipioServiceInterface
 
         if ($municipio) {
             Log::info('Municipio creado con éxito.', ['municipio_id' => $municipio->id]);
-            // Ejemplo: Disparar un evento 'MunicipioCreated'
-            // event(new MunicipioCreated($municipio));
+            
+            
         }
 
         return $municipio;
@@ -92,8 +92,8 @@ class MunicipioService implements MunicipioServiceInterface
 
         if ($deleted) {
             Log::info('Municipio eliminado con éxito.', ['municipio_id' => $municipioId]);
-            // Ejemplo: Limpiar referencias en otras tablas
-            // OtroModelo::where('municipio_id', $municipioId)->update(['municipio_id' => null]);
+            
+            
         } else {
             Log::warning('Intento de eliminación para municipio no existente.', ['municipio_id' => $municipioId]);
         }

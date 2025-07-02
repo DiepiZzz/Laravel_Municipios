@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Interfaces\UserServiceInterface; // Importa la interfaz del Servicio
+use App\Interfaces\UserServiceInterface; 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class UsuarioController extends Controller
 {
-    private UserServiceInterface $userService; // Ahora inyectamos la interfaz del Servicio
+    private UserServiceInterface $userService; 
 
-    // Inyección de dependencia del servicio
+    
     public function __construct(UserServiceInterface $userService)
     {
         $this->userService = $userService;
@@ -23,7 +23,7 @@ class UsuarioController extends Controller
      */
     public function index(): JsonResponse
     {
-        $users = $this->userService->getAllUsers(); // Llama al método del servicio
+        $users = $this->userService->getAllUsers(); 
         return response()->json([
             'data' => $users
         ]);
@@ -44,7 +44,7 @@ class UsuarioController extends Controller
             'email' => 'required|email|unique:usuarios',
         ]);
 
-        $user = $this->userService->registerUser($validatedData); // Llama al método del servicio
+        $user = $this->userService->registerUser($validatedData); 
         return response()->json([
             'message' => 'Usuario creado con éxito',
             'data' => $user
@@ -59,7 +59,7 @@ class UsuarioController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $user = $this->userService->getUserById($id); // Llama al método del servicio
+        $user = $this->userService->getUserById($id); 
 
         if (!$user) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);
@@ -86,7 +86,7 @@ class UsuarioController extends Controller
             'email' => 'sometimes|required|email|unique:usuarios,email,' . $id,
         ]);
 
-        $user = $this->userService->updateProfile($id, $validatedData); // Llama al método del servicio
+        $user = $this->userService->updateProfile($id, $validatedData); 
 
         if (!$user) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);
@@ -106,7 +106,7 @@ class UsuarioController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $deleted = $this->userService->deleteUserAccount($id); // Llama al método del servicio
+        $deleted = $this->userService->deleteUserAccount($id); 
 
         if (!$deleted) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);

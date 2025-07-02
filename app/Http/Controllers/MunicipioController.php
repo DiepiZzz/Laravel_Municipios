@@ -2,40 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Interfaces\MunicipioServiceInterface; // Importa la interfaz del Servicio
+use App\Interfaces\MunicipioServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Dompdf\Dompdf; 
+use Dompdf\Options; 
 
 class MunicipioController extends Controller
 {
-    private MunicipioServiceInterface $municipioService; // Ahora inyectamos la interfaz del Servicio
+    private MunicipioServiceInterface $municipioService;
 
-    // Inyección de dependencia del servicio
     public function __construct(MunicipioServiceInterface $municipioService)
     {
         $this->municipioService = $municipioService;
     }
 
-    /**
-     * Mostrar una lista de municipios.
-     *
-     * @return JsonResponse
-     */
-    public function index(): JsonResponse
+    public function index(): View
     {
-        $municipios = $this->municipioService->getAllMunicipios(); // Llama al método del servicio
-        return response()->json([
-            'data' => $municipios
-        ]);
+        $municipios = $this->municipioService->getAllMunicipios();
+        return view('municipios.index', compact('municipios'));
     }
 
-    /**
-     * Almacenar un nuevo municipio.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function store(Request $request): JsonResponse
+    public function create(): View
+    {
+        return view('municipios.create');
+    }
+
+    public function store(Request $request): RedirectResponse
     {
         $validatedData = $request->validate([
             'nombre' => 'required|string|max:255',
@@ -51,40 +46,27 @@ class MunicipioController extends Controller
             'descripcion' => 'nullable|string',
         ]);
 
-        $municipio = $this->municipioService->createNewMunicipio($validatedData); // Llama al método del servicio
-        return response()->json([
-            'message' => 'Municipio creado con éxito',
-            'data' => $municipio
-        ], 201);
-    }
+        $municipio = $this->municipioService->createNewMunicipio($validatedData);
 
-    /**
-     * Mostrar un municipio específico.
-     *
-     * @param int $id El ID del municipio.
-     * @return JsonResponse
-     */
-    public function show(int $id): JsonResponse
-    {
-        $municipio = $this->municipioService->getMunicipioById($id); // Llama al método del servicio
-
-        if (!$municipio) {
-            return response()->json(['message' => 'Municipio no encontrado'], 404);
+        if ($municipio) {
+            return redirect()->route('municipios.index')->with('status', '¡Municipio creado con éxito!');
         }
 
-        return response()->json([
-            'data' => $municipio
-        ]);
+        return back()->withInput()->withErrors(['error' => 'No se pudo crear el municipio.']);
     }
 
-    /**
-     * Actualizar un municipio específico.
-     *
-     * @param Request $request
-     * @param int $id El ID del municipio.
-     * @return JsonResponse
-     */
-    public function update(Request $request, int $id): JsonResponse
+    public function edit(int $id): View|RedirectResponse
+    {
+        $municipio = $this->municipioService->getMunicipioById($id);
+
+        if (!$municipio) {
+            return redirect()->route('municipios.index')->withErrors(['error' => 'Municipio no encontrado.']);
+        }
+
+        return view('municipios.edit', compact('municipio'));
+    }
+
+    public function update(Request $request, int $id): RedirectResponse
     {
         $validatedData = $request->validate([
             'nombre' => 'sometimes|required|string|max:255',
@@ -100,32 +82,91 @@ class MunicipioController extends Controller
             'descripcion' => 'sometimes|nullable|string',
         ]);
 
-        $municipio = $this->municipioService->updateMunicipioDetails($id, $validatedData); // Llama al método del servicio
+        $municipio = $this->municipioService->updateMunicipioDetails($id, $validatedData);
 
-        if (!$municipio) {
-            return response()->json(['message' => 'Municipio no encontrado'], 404);
+        if ($municipio) {
+            return redirect()->route('municipios.index')->with('status', '¡Municipio actualizado con éxito!');
         }
 
-        return response()->json([
-            'message' => 'Municipio actualizado con éxito',
-            'data' => $municipio
-        ]);
+        return back()->withInput()->withErrors(['error' => 'No se pudo actualizar el municipio.']);
+    }
+
+    public function destroy(int $id): RedirectResponse
+    {
+        $deleted = $this->municipioService->deleteExistingMunicipio($id);
+
+        if ($deleted) {
+            return redirect()->route('municipios.index')->with('status', '¡Municipio eliminado con éxito!');
+        }
+
+        return back()->withErrors(['error' => 'No se pudo eliminar el municipio o no fue encontrado.']);
     }
 
     /**
-     * Eliminar un municipio específico.
+     * Muestra la vista de gráficas de municipios.
      *
-     * @param int $id El ID del municipio.
-     * @return JsonResponse
+     * @return View
      */
-    public function destroy(int $id): JsonResponse
+    public function showGraficas(): View
     {
-        $deleted = $this->municipioService->deleteExistingMunicipio($id); // Llama al método del servicio
+        
+        $municipios = $this->municipioService->getAllMunicipios();
 
-        if (!$deleted) {
-            return response()->json(['message' => 'Municipio no encontrado'], 404);
-        }
+        
+        $chartData = $municipios->map(function ($municipio) {
+            return [
+                'nombre' => $municipio->nombre,
+                'numHabitantes' => (int) $municipio->numHabitantes,
+                'numCasas' => (int) $municipio->numCasas,
+                'numParques' => (int) $municipio->numParques,
+                'numColegios' => (int) $municipio->numColegios,
+            ];
+        })->toArray();
 
-        return response()->json(null, 204);
+        
+        return view('municipios.graficas', compact('chartData'));
+    }
+
+    /**
+     * Genera y descarga un PDF con las gráficas de municipios.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function downloadGraficasPdf(Request $request)
+    {
+        
+        $request->validate([
+            'chartImage' => 'required|string',
+        ]);
+
+        $chartImage = $request->input('chartImage');
+
+        
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true); 
+
+        $dompdf = new Dompdf($options);
+
+        
+        
+        $html = view('pdfs.graficas', compact('chartImage'))->render();
+
+        $dompdf->loadHtml($html);
+
+        
+        $dompdf->setPaper('A4', 'landscape'); 
+
+        
+        $dompdf->render();
+
+        
+        return response()->stream(function() use ($dompdf) {
+            echo $dompdf->output();
+        }, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="graficas_municipios.pdf"',
+        ]);
     }
 }

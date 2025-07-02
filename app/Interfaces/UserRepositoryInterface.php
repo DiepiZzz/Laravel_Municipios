@@ -2,8 +2,8 @@
 
 namespace App\Interfaces;
 
-use App\Models\Usuario; // Importa tu modelo Usuario
-use Illuminate\Database\Eloquent\Collection; // Para tipos de retorno
+use App\Models\Usuario; 
+use Illuminate\Database\Eloquent\Collection; 
 
 interface UserRepositoryInterface
 {

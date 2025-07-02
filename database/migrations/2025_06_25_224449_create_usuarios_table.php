@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
          Schema::create('usuarios', function (Blueprint $table) {
-            $table->id(); // ID autoincremental, clave primaria
-            $table->string('username')->unique(); // Nombre de usuario, debe ser único
-            $table->string('password'); // Contraseña
-            $table->string('nombre'); // Nombre completo
-            $table->string('email')->unique(); // Correo electrónico, debe ser único
-            $table->timestamps(); // Crea automáticamente columnas 'created_at' y 'updated_at'
+            $table->id(); 
+            $table->string('username')->unique(); 
+            $table->string('password'); 
+            $table->string('nombre'); 
+            $table->string('email')->unique(); 
+            $table->timestamps(); 
         });
     }
 

@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\MunicipioRepositoryInterface;
-use App\Models\Municipio; // Asegúrate de importar el modelo correcto
+use App\Models\Municipio; 
 use Illuminate\Database\Eloquent\Collection;
 
 class MunicipioRepository implements MunicipioRepositoryInterface

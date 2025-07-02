@@ -27,25 +27,29 @@ class CustomResetPasswordNotification extends ResetPasswordNotification
      */
     public function toMail($notifiable)
     {
+        
         $resetUrl = url(route('password.reset', [
             'token' => $this->token,
             'email' => $notifiable->getEmailForPasswordReset(),
-        ], false)); // false para URL relativa si APP_URL es localhost, o true para absoluta
+        ]));
 
-        // Configuración de remitente y respuesta explícita
         $fromAddress = config('mail.from.address');
         $fromName = config('mail.from.name');
 
+        
         return (new MailMessage)
-                    ->from($fromAddress, $fromName) // Usa la configuración de .env
-                    ->replyTo($fromAddress, $fromName) // Añade una dirección de respuesta
-                    ->subject('Restablecimiento de Contraseña') // Asunto muy simple
-                    ->line('Hola,') // Saludo simple
+                    ->from($fromAddress, $fromName)
+                    ->replyTo($fromAddress, $fromName)
+                    ->subject('Restablecimiento de Contraseña')
+                    ->line('Hola,')
                     ->line('Hemos recibido una solicitud para restablecer la contraseña de tu cuenta.')
-                    ->action('Restablecer Contraseña', $resetUrl) // Botón claro
-                    ->line('Si no solicitaste esto, ignora este correo.') // Mensaje de seguridad muy simple
+                    ->line('Haz clic en el siguiente enlace para restablecer tu contraseña:')
+                    ->line($resetUrl) 
+                    ->line('Este enlace caducará en ' . config('auth.passwords.users.expire') . ' minutos.')
+                    ->line('Si no solicitaste esto, ignora este correo.')
                     ->salutation('Saludos,')
-                    ->line(config('app.name')); // Nombre de tu aplicación al final
+                    ->line(config('app.name'));
+                    
     }
 
     /**
@@ -57,7 +61,7 @@ class CustomResetPasswordNotification extends ResetPasswordNotification
     public function toArray($notifiable)
     {
         return [
-            //
+            
         ];
     }
 }
