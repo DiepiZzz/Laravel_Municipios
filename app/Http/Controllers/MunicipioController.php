@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Interfaces\MunicipioRepositoryInterface; // Importa la interfaz
+use App\Interfaces\MunicipioServiceInterface; // Importa la interfaz del Servicio
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class MunicipioController extends Controller
 {
-    private MunicipioRepositoryInterface $municipioRepository;
+    private MunicipioServiceInterface $municipioService; // Ahora inyectamos la interfaz del Servicio
 
-    // Inyección de dependencia del repositorio
-    public function __construct(MunicipioRepositoryInterface $municipioRepository)
+    // Inyección de dependencia del servicio
+    public function __construct(MunicipioServiceInterface $municipioService)
     {
-        $this->municipioRepository = $municipioRepository;
+        $this->municipioService = $municipioService;
     }
 
     /**
@@ -23,7 +23,7 @@ class MunicipioController extends Controller
      */
     public function index(): JsonResponse
     {
-        $municipios = $this->municipioRepository->getAllMunicipios();
+        $municipios = $this->municipioService->getAllMunicipios(); // Llama al método del servicio
         return response()->json([
             'data' => $municipios
         ]);
@@ -37,7 +37,6 @@ class MunicipioController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        // Puedes añadir validación aquí
         $validatedData = $request->validate([
             'nombre' => 'required|string|max:255',
             'departamento' => 'nullable|string|max:255',
@@ -52,7 +51,7 @@ class MunicipioController extends Controller
             'descripcion' => 'nullable|string',
         ]);
 
-        $municipio = $this->municipioRepository->createMunicipio($validatedData);
+        $municipio = $this->municipioService->createNewMunicipio($validatedData); // Llama al método del servicio
         return response()->json([
             'message' => 'Municipio creado con éxito',
             'data' => $municipio
@@ -67,7 +66,7 @@ class MunicipioController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $municipio = $this->municipioRepository->getMunicipioById($id);
+        $municipio = $this->municipioService->getMunicipioById($id); // Llama al método del servicio
 
         if (!$municipio) {
             return response()->json(['message' => 'Municipio no encontrado'], 404);
@@ -87,7 +86,6 @@ class MunicipioController extends Controller
      */
     public function update(Request $request, int $id): JsonResponse
     {
-        // Validación para la actualización
         $validatedData = $request->validate([
             'nombre' => 'sometimes|required|string|max:255',
             'departamento' => 'sometimes|nullable|string|max:255',
@@ -102,7 +100,7 @@ class MunicipioController extends Controller
             'descripcion' => 'sometimes|nullable|string',
         ]);
 
-        $municipio = $this->municipioRepository->updateMunicipio($id, $validatedData);
+        $municipio = $this->municipioService->updateMunicipioDetails($id, $validatedData); // Llama al método del servicio
 
         if (!$municipio) {
             return response()->json(['message' => 'Municipio no encontrado'], 404);
@@ -122,7 +120,7 @@ class MunicipioController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $deleted = $this->municipioRepository->deleteMunicipio($id);
+        $deleted = $this->municipioService->deleteExistingMunicipio($id); // Llama al método del servicio
 
         if (!$deleted) {
             return response()->json(['message' => 'Municipio no encontrado'], 404);

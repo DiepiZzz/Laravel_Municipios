@@ -37,6 +37,10 @@ return [
     | stack traces will be shown on every error that occurs within your
     | application. If disabled, a simple generic error page is shown.
     |
+    | When your application is in debug mode, detailed error messages with
+    | stack traces will be shown on every error that occurs within your
+    | application. If disabled, a simple generic error page is shown.
+    |
     */
 
     'debug' => (bool) env('APP_DEBUG', false),
@@ -174,7 +178,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\RepositoryServiceProvider::class, // <--- ¡Añade esta línea!
+        App\Providers\RepositoryServiceProvider::class,
+        App\Providers\ServiceServiceProvider::class,   // <--- ¡Esta es la línea añadida!
 
     ],
 
@@ -234,4 +239,3 @@ return [
     ],
 
 ];
-

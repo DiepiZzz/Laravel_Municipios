@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Interfaces\UserRepositoryInterface; // Importa la interfaz
+use App\Interfaces\UserServiceInterface; // Importa la interfaz del Servicio
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse; // Para las respuestas JSON
+use Illuminate\Http\JsonResponse;
 
 class UsuarioController extends Controller
 {
-    private UserRepositoryInterface $userRepository;
+    private UserServiceInterface $userService; // Ahora inyectamos la interfaz del Servicio
 
-    // Inyección de dependencia del repositorio
-    public function __construct(UserRepositoryInterface $userRepository)
+    // Inyección de dependencia del servicio
+    public function __construct(UserServiceInterface $userService)
     {
-        $this->userRepository = $userRepository;
+        $this->userService = $userService;
     }
 
     /**
@@ -23,7 +23,7 @@ class UsuarioController extends Controller
      */
     public function index(): JsonResponse
     {
-        $users = $this->userRepository->getAllUsers();
+        $users = $this->userService->getAllUsers(); // Llama al método del servicio
         return response()->json([
             'data' => $users
         ]);
@@ -37,7 +37,6 @@ class UsuarioController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        // Puedes añadir validación aquí si lo deseas
         $validatedData = $request->validate([
             'username' => 'required|unique:usuarios',
             'password' => 'required|min:6',
@@ -45,11 +44,11 @@ class UsuarioController extends Controller
             'email' => 'required|email|unique:usuarios',
         ]);
 
-        $user = $this->userRepository->createUser($validatedData);
+        $user = $this->userService->registerUser($validatedData); // Llama al método del servicio
         return response()->json([
             'message' => 'Usuario creado con éxito',
             'data' => $user
-        ], 201); // 201 Created
+        ], 201);
     }
 
     /**
@@ -60,7 +59,7 @@ class UsuarioController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $user = $this->userRepository->getUserById($id);
+        $user = $this->userService->getUserById($id); // Llama al método del servicio
 
         if (!$user) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);
@@ -80,15 +79,14 @@ class UsuarioController extends Controller
      */
     public function update(Request $request, int $id): JsonResponse
     {
-        // Validación para la actualización (password no siempre requerido)
         $validatedData = $request->validate([
             'username' => 'sometimes|required|unique:usuarios,username,' . $id,
-            'password' => 'sometimes|nullable|min:6', // Contraseña opcional en la actualización
+            'password' => 'sometimes|nullable|min:6',
             'nombre' => 'sometimes|required',
             'email' => 'sometimes|required|email|unique:usuarios,email,' . $id,
         ]);
 
-        $user = $this->userRepository->updateUser($id, $validatedData);
+        $user = $this->userService->updateProfile($id, $validatedData); // Llama al método del servicio
 
         if (!$user) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);
@@ -108,12 +106,12 @@ class UsuarioController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $deleted = $this->userRepository->deleteUser($id);
+        $deleted = $this->userService->deleteUserAccount($id); // Llama al método del servicio
 
         if (!$deleted) {
             return response()->json(['message' => 'Usuario no encontrado'], 404);
         }
 
-        return response()->json(null, 204); // 204 No Content
+        return response()->json(null, 204);
     }
 }
